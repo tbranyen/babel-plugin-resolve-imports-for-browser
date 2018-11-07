@@ -1,5 +1,7 @@
 # Babel Resolve: Imports to Browser ESM
 
+[![Build Status](https://travis-ci.org/tbranyen/babel-plugin-resolve-imports.svg?branch=master)](https://travis-ci.org/tbranyen/babel-plugin-resolve-imports)
+
 A Babel 7 compatible transform to convert import paths to browser-compatible
 source paths. Users of previous module systems are used to using extensionless
 imports and files from `node_modules`. This module is designed to make any
