@@ -10,14 +10,14 @@ module loadable by the web module system.
 ### Usage
 
 ```sh
-npm install --save-dev babel-plugin-resolve-imports
+npm install --save-dev babel-plugin-resolve-imports-for-browser
 ```
 
 Update your babel configuration:
 
 ```json
 {
-  "plugins": ["resolve-imports"]
+  "plugins": ["resolve-imports-for-browser"]
 }
 ```
 
