@@ -27,13 +27,7 @@ const visitor = {
       const nodePath = require.resolve(source.node.value, {
         paths: [cwd],
       });
-      const ext = extname(nodePath);
-      let newSource = t.stringLiteral(nodePath.slice(cwd.length));
-
-      // Ensure the node path has an extension.
-      if (!ext) {
-        newSource = t.stringLiteral(nodePath.slice(cwd.length) + '.js');
-      }
+      const newSource = t.stringLiteral(nodePath.slice(cwd.length));
 
       source.replaceWith(newSource);
     }
