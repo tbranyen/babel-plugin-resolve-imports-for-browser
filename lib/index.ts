@@ -1,0 +1,46 @@
+import process from 'process';
+import { extname } from 'path';
+import { declare } from '@babel/helper-plugin-utils';
+import { template, types as t } from '@babel/core';
+
+const cwd = process.cwd();
+
+const visitor = {
+  enter(path) {
+    const { specifiers } = path.node;
+    const source = path.get('source');
+
+    if (!source.node) {
+      return;
+    }
+
+    const ext = extname(source.node.value);
+
+    if (source.node.value[0] === '.' || source.node.value[0] === '/') {
+      if (!ext) {
+        const newSource = t.stringLiteral(source.node.value + '.js');
+        source.replaceWith(newSource);
+      }
+    }
+
+    else {
+      const nodePath = require.resolve(source.node.value, {
+        paths: [cwd],
+      });
+
+      const newSource = t.stringLiteral(nodePath.slice(cwd.length));
+      source.replaceWith(newSource);
+    }
+  },
+};
+
+export default declare((api, options) => {
+  api.assertVersion(7);
+
+  return {
+    visitor: {
+      ImportDeclaration: visitor,
+      ExportDeclaration: visitor,
+    },
+  };
+});
