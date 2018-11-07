@@ -6,7 +6,7 @@ import { template, types as t } from '@babel/core';
 const cwd = process.cwd();
 
 const visitor = {
-  enter(path) {
+  exit(path) {
     const { specifiers } = path.node;
     const source = path.get('source');
 
@@ -27,8 +27,14 @@ const visitor = {
       const nodePath = require.resolve(source.node.value, {
         paths: [cwd],
       });
+      const ext = extname(nodePath);
+      let newSource = t.stringLiteral(nodePath.slice(cwd.length));
 
-      const newSource = t.stringLiteral(nodePath.slice(cwd.length));
+      // Ensure the node path has an extension.
+      if (!ext) {
+        newSource = t.stringLiteral(nodePath.slice(cwd.length) + '.js');
+      }
+
       source.replaceWith(newSource);
     }
   },
@@ -39,8 +45,14 @@ export default declare((api, options) => {
 
   return {
     visitor: {
-      ImportDeclaration: visitor,
-      ExportDeclaration: visitor,
+      Program: {
+        exit(path) {
+          path.traverse({
+            ImportDeclaration: visitor,
+            ExportDeclaration: visitor,
+          });
+        }
+      },
     },
   };
 });
